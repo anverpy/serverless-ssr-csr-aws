@@ -1,0 +1,35 @@
+{
+  "timestamp": "2026-04-15T08:59:18.779Z",
+  "ssr": {
+    "url": "http://localhost:4566/restapis/1etsztts4i/dev/_user_request_/ssr",
+    "ttfb": 516,
+    "totalBytes": 36,
+    "hasH1": false,
+    "h1Count": 0,
+    "hasH2": false,
+    "h2Count": 0,
+    "hasMetaDescription": false,
+    "hasRobotsMeta": false,
+    "hasSchemaOrg": false,
+    "visibleText": 36,
+    "productCards": 0,
+    "rootEmpty": false,
+    "hasTitleTag": false
+  },
+  "csr": {
+    "url": "http://localhost:4566/csr-app/index.html",
+    "ttfb": 4,
+    "totalBytes": 405,
+    "hasH1": false,
+    "h1Count": 0,
+    "hasH2": false,
+    "h2Count": 0,
+    "hasMetaDescription": false,
+    "hasRobotsMeta": false,
+    "hasSchemaOrg": false,
+    "visibleText": 18,
+    "productCards": 0,
+    "rootEmpty": true,
+    "hasTitleTag": true
+  }
+}

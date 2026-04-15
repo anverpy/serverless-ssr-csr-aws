@@ -1,0 +1,27 @@
+# Node.js
+node_modules/
+npm-debug.log
+csr-app/dist/
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# AWS SAM & LocalStack
+.aws-sam/
+sam-artifacts/
+packaged.yaml
+function.zip
+.localstack-config.json
+localstack-data/
+
+# Environment variables
+.env
+
+# OS
+.DS_Store
+
+# Markdowns de desarrollo
+AI_CONTEXT.md

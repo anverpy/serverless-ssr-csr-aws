@@ -1,0 +1,24 @@
+services:
+  localstack:
+    image: localstack/localstack:3.8.1
+    container_name: localstack
+    ports:
+      - "4566:4566"
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./localstack-data:/var/lib/localstack"
+
+  postgres-db:
+    image: postgres:15
+    container_name: postgres-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=products_db
+    # En desarrollo local usamos tmpfs para reset rápido, en prod sería un volume normal.
+    tmpfs:
+      - /var/lib/postgresql/data

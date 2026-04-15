@@ -1,0 +1,121 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  Hybrid architecture SSR vs CSR using LocalStack
+
+Resources:
+  CsrAppBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: csr-app
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: false
+        BlockPublicPolicy: false
+        IgnorePublicAcls: false
+        RestrictPublicBuckets: false
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: index.html
+
+  CsrAppBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref CsrAppBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal: "*"
+            Action: "s3:GetObject"
+            Resource: !Sub "arn:aws:s3:::${CsrAppBucket}/*"
+
+  LambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: lambda-execution
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: "*"
+
+  ApiGatewayApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+      Cors:
+        AllowMethods: "'GET,POST,OPTIONS'"
+        AllowHeaders: "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'"
+        AllowOrigin: "'*'"
+      DefinitionBody:
+        swagger: "2.0"
+        info:
+          title: "ssr-csr-api"
+        paths:
+          /api/products:
+            get:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${ApiFunction.Arn}/invocations"
+          /ssr:
+            get:
+              x-amazon-apigateway-integration:
+                httpMethod: POST
+                type: aws_proxy
+                uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${SsrFunction.Arn}/invocations"
+
+  ApiFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: lambda-api
+      CodeUri: ./lambda-api
+      Handler: index.handler
+      Runtime: nodejs18.x
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        ApiEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /api/products
+            Method: GET
+
+  SsrFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: productos-ssr
+      CodeUri: ./lambda-ssr
+      Handler: index.handler
+      Runtime: nodejs18.x
+      Role: !GetAtt LambdaRole.Arn
+      Events:
+        SsrEvent:
+          Type: Api
+          Properties:
+            RestApiId: !Ref ApiGatewayApi
+            Path: /ssr
+            Method: GET
+
+Outputs:
+  ApiId:
+    Description: "API Gateway ID"
+    Value: !Ref ApiGatewayApi
+  ApiUrl:
+    Description: "API endpoint URL"
+    Value: !Sub "http://localhost:4566/restapis/${ApiGatewayApi}/dev/_user_request_/api/products"
+  SsrUrl:
+    Description: "SSR endpoint URL"
+    Value: !Sub "http://localhost:4566/restapis/${ApiGatewayApi}/dev/_user_request_/ssr"

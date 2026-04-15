@@ -1,0 +1,24 @@
+{
+  "ssr": {
+    "ttfb": 496,
+    "bytes": 32877,
+    "h1_count": 1,
+    "h2_count": 50,
+    "has_meta_desc": true,
+    "has_schema": true,
+    "product_cards": 50,
+    "empty_root": false,
+    "has_title": true
+  },
+  "csr": {
+    "ttfb": 7,
+    "bytes": 405,
+    "h1_count": 0,
+    "h2_count": 0,
+    "has_meta_desc": false,
+    "has_schema": false,
+    "product_cards": 0,
+    "empty_root": true,
+    "has_title": true
+  }
+}

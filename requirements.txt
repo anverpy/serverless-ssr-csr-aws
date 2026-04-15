@@ -1,0 +1,11 @@
+# Dependencias para interactuar con LocalStack y Scripts de Data
+awscli-local
+boto3
+docker
+botocore
+jmespath
+localstack-client
+python-dateutil
+s3transfer
+six
+urllib3
