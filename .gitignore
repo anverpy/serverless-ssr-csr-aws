@@ -9,6 +9,9 @@ __pycache__/
 venv/
 .venv/
 
+# LocalStack Cache
+.localstack/cache
+
 # AWS SAM & LocalStack
 .aws-sam/
 sam-artifacts/
